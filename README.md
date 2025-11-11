@@ -207,3 +207,4 @@ Place your assets in:
 
 **Permissions:**
 Edit `android/app/src/main/AndroidManifest.xml` to add required permissions.
+"# print-sticker" 
