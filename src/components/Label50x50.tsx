@@ -34,7 +34,6 @@ export const Label50x50 = ({ data }: Label50x50Props) => {
         <span>
           <span className="font-bold">QTDE:</span> {data.quantity}
         </span>
-        <span className="font-medium">Litro</span>
         <span>
           <span className="font-bold">VAL:</span> {data.expiry}
         </span>
