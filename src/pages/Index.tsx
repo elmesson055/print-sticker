@@ -19,7 +19,7 @@ const Index = () => {
   const printRef = useRef<HTMLDivElement>(null);
 
   const handlePrint = useReactToPrint({
-    contentRef: printRef,
+    content: () => printRef.current,
     pageStyle: `
       @page {
         size: ${selectedSize === "58x30" ? "58mm 30mm" : "50mm 50mm"};
