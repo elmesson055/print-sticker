@@ -19,19 +19,69 @@ const Index = () => {
   const printRef = useRef<HTMLDivElement>(null);
 
   const handlePrint = useReactToPrint({
-    content: () => printRef.current,
+    content: () => {
+      const content = printRef.current;
+      if (!content) {
+        console.error('Elemento de impressão não encontrado');
+        return null;
+      }
+      return content;
+    },
     pageStyle: `
       @page {
-        size: ${selectedSize === "58x30" ? "58mm 30mm" : "50mm 50mm"};
+        size: ${selectedSize === "58x30" ? '58mm 30mm' : '50mm 50mm'};
         margin: 0;
       }
       @media print {
-        body {
-          margin: 0;
-          padding: 0;
+        @page { margin: 0; }
+        body { 
+          margin: 0 !important; 
+          padding: 0 !important;
+        }
+        body * {
+          visibility: hidden;
+        }
+        #print-root,
+        #print-root * {
+          visibility: visible;
+        }
+        #print-root {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
         }
       }
     `,
+    onBeforeGetContent: () => {
+      console.log('Preparando para imprimir...');
+      return Promise.resolve();
+    },
+    onAfterPrint: () => {
+      console.log('Impressão concluída');
+    },
+    onPrintError: (error, cause) => {
+      console.error('Erro na impressão:', { error, cause });
+      alert('Erro ao tentar imprimir. Por favor, tente novamente.');
+    },
+    removeAfterPrint: false,
+    suppressErrors: true,
+    documentTitle: 'Etiqueta',
+    print: (printIframe) => {
+      try {
+        const iframe = printIframe.contentWindow || printIframe.contentDocument;
+        if (iframe) {
+          if (iframe.document) {
+            iframe.document.execCommand('print', false, null);
+          } else {
+            iframe.print();
+          }
+        }
+      } catch (error) {
+        window.print();
+      }
+    }
   });
 
   return (
@@ -62,12 +112,14 @@ const Index = () => {
                 <CardTitle>Pré-visualização</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center justify-center min-h-[400px]">
-                <div ref={printRef} className="print-container">
-                  {selectedSize === "58x30" ? (
-                    <Label58x30 data={labelData} />
-                  ) : (
-                    <Label50x50 data={labelData} />
-                  )}
+                <div className="border border-dashed p-4 rounded-lg">
+                  <div id="print-root" ref={printRef}>
+                    {selectedSize === "58x30" ? (
+                      <Label58x30 data={labelData} />
+                    ) : (
+                      <Label50x50 data={labelData} />
+                    )}
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -75,22 +127,6 @@ const Index = () => {
         </div>
       </div>
 
-      <style>{`
-        @media print {
-          body * {
-            visibility: hidden;
-          }
-          .print-container,
-          .print-container * {
-            visibility: visible;
-          }
-          .print-container {
-            position: absolute;
-            left: 0;
-            top: 0;
-          }
-        }
-      `}</style>
     </div>
   );
 };
