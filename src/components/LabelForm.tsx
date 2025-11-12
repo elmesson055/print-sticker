@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Printer, RefreshCw } from "lucide-react";
+import { Download, RefreshCw } from "lucide-react";
 import { generateBarcode, BarcodeType } from "@/lib/barcodeUtils";
 
 export interface LabelData {
@@ -177,48 +177,10 @@ export const LabelForm = ({ onDataChange, onPrint, selectedSize, onSizeChange }:
           </div>
         </div>
 
-        <div className="mt-6 space-y-2">
-          <Button 
-            onClick={async (e) => {
-              e.preventDefault();
-              console.log('Iniciando processo de impressão...');
-              
-              try {
-                // Adiciona um pequeno atraso para garantir que o DOM esteja pronto
-                await new Promise(resolve => setTimeout(resolve, 100));
-                
-                // Verifica se a função onPrint existe
-                if (typeof onPrint === 'function') {
-                  onPrint();
-                } else {
-                  throw new Error('Função de impressão não disponível');
-                }
-              } catch (error) {
-                console.error('Erro ao tentar imprimir:', error);
-                // Tenta usar o método de impressão nativo como fallback
-                try {
-                  console.log('Tentando impressão nativa...');
-                  window.print();
-                } catch (fallbackError) {
-                  console.error('Erro na impressão nativa:', fallbackError);
-                  alert('Não foi possível abrir a janela de impressão. Por favor, verifique as configurações do seu navegador.');
-                }
-              }
-            }} 
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200" 
-            size="lg"
-            type="button"
-            aria-label="Imprimir etiqueta"
-          >
-            <Printer className="mr-2 h-5 w-5" />
-            Imprimir Etiqueta
-          </Button>
-          
-          <div className="text-xs text-gray-500 text-center space-y-1">
-            <p>• Certifique-se de que os pop-ups estão habilitados para este site</p>
-            <p>• Se a impressão não iniciar, tente usar o atalho Ctrl+P (Windows) ou Cmd+P (Mac)</p>
-          </div>
-        </div>
+        <Button onClick={onPrint} className="w-full" size="lg">
+          <Download className="mr-2 h-5 w-5" />
+          Baixar Etiqueta em PDF
+        </Button>
       </CardContent>
     </Card>
   );
