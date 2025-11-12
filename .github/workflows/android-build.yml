@@ -2,9 +2,9 @@ name: Build Android APK
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
   workflow_dispatch:
 
 env:
@@ -47,23 +47,15 @@ jobs:
     - name: Sync Capacitor
       run: npx cap sync
       
-    - name: Setup Keystore
-      run: |
-        echo "${{ secrets.KEYSTORE }}" | base64 -d > android/app/${{ env.ANDROID_KEYSTORE_FILE }}
-        echo "storeFile=${{ env.ANDROID_KEYSTORE_FILE }}" >> android/gradle.properties
-        echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> android/gradle.properties
-        echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/gradle.properties
-        echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/gradle.properties
-        
-    - name: Build Release APK
+    - name: Build Debug APK
       working-directory: ./android
       run: |
         chmod +x gradlew
-        ./gradlew assembleRelease
+        ./gradlew assembleDebug
         
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: app-release
-        path: android/app/build/outputs/apk/release/*.apk
+        name: app-debug
+        path: android/app/build/outputs/apk/debug/*.apk
         retention-days: 7
