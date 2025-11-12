@@ -13,7 +13,11 @@
     "cap:add:android": "cap add android",
     "cap:sync": "cap sync",
     "cap:open:android": "cap open android",
-    "build:android": "npm run build && cap sync android"
+    "android:init": "npm run build && npx cap add android && npm run android:sync",
+    "android:sync": "npx cap sync android",
+    "android:build:debug": "npm run build && npm run android:sync && cd android && ./gradlew assembleDebug",
+    "android:build:release": "npm run build && npm run android:sync && cd android && ./gradlew assembleRelease",
+    "android:run:debug": "npx cap run android --target <device-id>"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
